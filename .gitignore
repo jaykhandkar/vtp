@@ -5,3 +5,4 @@
 *.ko
 *.order
 *.symvers
+*.cmd
