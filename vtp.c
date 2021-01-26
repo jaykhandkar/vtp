@@ -102,7 +102,6 @@ int vtp_init(void)
 	int result, err;
 	dev_t dev = 0;
 	
-	
 	result = alloc_chrdev_region(&dev, vtp_minor, nr_vtp_devs,
 				     "vtp");
 	vtp_major = MAJOR(dev);

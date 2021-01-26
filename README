@@ -1,3 +1,5 @@
 vtp.c - A char device that converts virtual addresses to physical addresses
 and prints them to the kernel log buffer when ioctl'd, meant to show how
-the lnux kernel handles page tables and virtual memory.
+the linux kernel handles page tables and virtual memory.
+
+page_table_walk.pdf describes in detail how it is done.
