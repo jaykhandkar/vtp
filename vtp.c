@@ -13,6 +13,8 @@
 #include <asm/page.h>           /*pgd_t, pte_t, __va etc.*/
 #include <linux/pgtable.h>      /*pgd_offset, pud_offset etc*/
 #include <asm/pgtable_types.h>  /*PTE_PFN_MASK*/
+#include <linux/highmem.h>
+#include <asm/io.h>
 
 MODULE_LICENSE("Dual BSD/GPL");
 
@@ -30,13 +32,64 @@ struct cdev *vtp_cdev;		/*our character device*/
  * address by walking the current process' page tables.
  *
  *  arg: the user-space virtual address to be converted
+ *  cmd: ignored
  *
  *  returns: -1 for any failure, zero otherwise
  */
 long vtp_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
-	printk(KERN_NOTICE"ioctl has been called on the char device!\n");
+	//printk(KERN_NOTICE"ioctl has been called on the char device!\n");
+	char c;
+	
+	pgd_t *pgd;
+	pte_t *ptep;
+	pud_t *pud;
+	p4d_t *p4d;
+	pmd_t *pmd;
+	char *addr, *pf_addr;
+	
+	struct page *page = NULL;
+	struct mm_struct *mm = current->mm;
+	
+	pgd = pgd_offset(mm, arg);
+	if (pgd_none(*pgd) || pgd_bad(*pgd))
+		goto out;
+	printk(KERN_NOTICE "Valid pgd\n");
+	
+	p4d = p4d_offset(pgd, arg);
+	if (p4d_none(*p4d) || p4d_bad(*p4d))
+		goto out;
+	printk(KERN_NOTICE "Valid p4d\n");
+	
+	pud = pud_offset(p4d, arg);
+	if (pud_none(*pud) || pud_bad(*pud))
+		goto out;
+	printk(KERN_NOTICE "Valid pud\n");
+	
+	pmd = pmd_offset(pud, arg);
+	if (pmd_none(*pmd) || pmd_bad(*pmd))
+		goto out;
+	printk(KERN_NOTICE "Valid pmd\n");
+	
+	ptep = pte_offset_kernel(pmd, arg);
+	if(!ptep)
+		goto out;
+	
+	page = pte_page(*ptep);
+	pf_addr = (char *)((unsigned long)pte_val(*ptep) & PTE_PFN_MASK);
+	addr = pf_addr + (arg & ~PAGE_MASK);
+	c = *((char *) __va(addr));
+	printk(KERN_INFO "the physical address is 0x%px\n", (void *)addr);
+	printk(KERN_INFO "the physical page frame address is 0x%px\n", (void *)pf_addr);
+	printk(KERN_INFO "and the kernel virt addr is 0x%px\n", (void*)__va(addr));
+	printk(KERN_INFO "the byte there is 0x%x\n", c);
+	pte_unmap(ptep);
+	
 	return 0;
+	
+	out:
+	printk(KERN_INFO "couldn't walk page tables\n");
+	return -1;
 }
 
 const struct file_operations vtp_fops = {
