@@ -371,13 +371,37 @@ int main()
 }
 \end{lstlisting}
 
-If we load our module, run our test program and check the kernel log buffer using \verb|dmesg|, sure enough, everything works perfectly:
+If we load our module, run our test program and check the kernel log buffer using \verb|dmesg|, sure enough, everything works perfectly:\\~\\
 
-\begin{lstlisting}[language=sh, backgroundcolor=\color{backcolour}]
+\begin{lstlisting}[language=sh, backgroundcolor=\color{backcolour}, basicstyle=\ttfamily\footnotesize]
 $ sudo sh vtp_load.sh
 $ ./test
 $ dmesg
 
+[ 6278.829793] Valid pgd
+[ 6278.829795] Valid p4d
+[ 6278.829796] Valid pud
+[ 6278.829798] Valid pmd
+[ 6278.829801] the physical address is 0x0000000125e2be7a
+[ 6278.829802] the physical page frame address is 0x0000000125e2b000
+[ 6278.829804] and the kernel virt addr is 0xffff9248e5e2be7a
+[ 6278.829806] the byte there is 0x41
+[ 6278.829809] Valid pgd
+[ 6278.829810] Valid p4d
+[ 6278.829811] Valid pud
+[ 6278.829812] Valid pmd
+[ 6278.829813] the physical address is 0x0000000125e2be7b
+[ 6278.829815] the physical page frame address is 0x0000000125e2b000
+[ 6278.829816] and the kernel virt addr is 0xffff9248e5e2be7b
+[ 6278.829817] the byte there is 0x42
+[ 6278.829820] Valid pgd
+[ 6278.829821] Valid p4d
+[ 6278.829822] Valid pud
+[ 6278.829823] Valid pmd
+[ 6278.829825] the physical address is 0x000000010fa692a0
+[ 6278.829826] the physical page frame address is 0x000000010fa69000
+[ 6278.829828] and the kernel virt addr is 0xffff9248cfa692a0
+[ 6278.829829] the byte there is 0x51
 \end{lstlisting}
 
 \end{flushleft}
