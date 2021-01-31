@@ -2,4 +2,11 @@ vtp.c - A char device that converts virtual addresses to physical addresses
 and prints them to the kernel log buffer when ioctl'd, meant to show how
 the linux kernel handles page tables and virtual memory.
 
+vtp_load.sh - A shell script that loads the driver and creates the
+corresponding char device /dev/vtp0 using mknod. Build the driver before
+running this script.
+
+vtp_unload.sh - Removes the driver from the kernel and deletes the character
+device.
+
 page_table_walk.pdf describes in detail how it is done.
